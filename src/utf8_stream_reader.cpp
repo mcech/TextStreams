@@ -3,38 +3,47 @@
 #include <bit>
 #include <iostream>
 
-
 Utf8StreamReader::Utf8StreamReader(std::istream& fs) : fs_(fs)
 {
 }
 
 char32_t Utf8StreamReader::peek()
 {
-    std::streampos pos = fs_.tellg();
-    char32_t c = read();
-    fs_.seekg(pos);
-    return c;
+    if (next_ == EOF)
+    {
+        advance();
+    }
+    return next_;
 }
 
 char32_t Utf8StreamReader::read()
 {
-    uint64_t pos = fs_.tellg();
-    int32_t b = fs_.get();
-    if (b == EOF)
+    char32_t c = peek();
+    next_ = EOF;
+    return c;
+}
+
+void Utf8StreamReader::advance()
+{
+    if (next_ == EOF)
     {
-        return EOF;
-    }
-    else
-    {
+        uint64_t pos = fs_.tellg();
+
+        int32_t b = fs_.get();
+        if (b == EOF)
+        {
+            next_ = EOF;
+            return;
+        }
+
         int leading = std::countl_one<uint8_t>(b);
         if (leading == 0)
         {
-            return b;
+            next_ = b;
         }
         else if (leading == 1 || leading > 4)
         {
-            std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
-            return REPLACEMENT_CHAR;
+            throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
         }
         else
         {
@@ -44,18 +53,22 @@ char32_t Utf8StreamReader::read()
                 b = fs_.get();
                 if (b == EOF || (b & 0x80) == 0 || (b & 0x40) != 0)
                 {
-                    std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
-                    return REPLACEMENT_CHAR;
+                    throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+                    next_ = REPLACEMENT_CHAR;
+                    return;
                 }
                 c = (c << 6) | (b & 0x3F);
             }
             if (c >= 0xD800 && c < 0xDFFF)
             {
-                // 0xD800 to 0xDFFF are forbidden in Unicode. They are reserved to encode UTF-16
-                std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
-                return REPLACEMENT_CHAR;       
+                // 0xD800 to 0xDFFF not assigned in Unicode. They are reserved to encode UTF-16
+                throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+                next_ = REPLACEMENT_CHAR;
             }
-            return c;
+            else
+            {
+                next_ = c;
+            }
         }
     }
 }

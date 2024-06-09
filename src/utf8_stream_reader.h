@@ -18,5 +18,8 @@ protected:
 
     Utf8StreamReader(std::istream& fs);
 
+    void advance();
+
     std::istream& fs_;
+    char32_t next_ = EOF;
 };

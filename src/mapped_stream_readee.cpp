@@ -14,8 +14,7 @@ char32_t MappedStreamReader::peek()
         }
         else
         {
-            std::cerr << "Warning: invalid byte sequence at position " << fs_.tellg() << std::endl;
-            return REPLACEMENT_CHAR;
+            throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
         }
     }
 

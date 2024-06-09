@@ -18,5 +18,8 @@ protected:
 
     Utf32LeStreamReader(std::istream& fs);
 
+    void advance();
+
     std::istream& fs_;
+    char32_t next_ = EOF;
 };

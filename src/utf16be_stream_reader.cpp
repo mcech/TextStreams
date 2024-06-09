@@ -8,55 +8,61 @@ Utf16BeStreamReader::Utf16BeStreamReader(std::istream& fs) : fs_(fs)
 
 char32_t Utf16BeStreamReader::peek()
 {
-    std::streampos pos = fs_.tellg();
-    char32_t c = read();
-    fs_.seekg(pos);
-    return c;
+    if (next_ == EOF)
+    {
+        advance();
+    }
+    return next_;
 }
 
 char32_t Utf16BeStreamReader::read()
 {
-    if (fs_.peek() == EOF)
-    {
-        return EOF;
-    }
-    else
+    char32_t c = peek();
+    next_ = EOF;
+    return c;
+}
+
+void Utf16BeStreamReader::advance()
+{
+    if (next_ == EOF)
     {
         uint64_t pos = fs_.tellg();
-        int32_t c = 0;
+
+        if (fs_.peek() == EOF)
+        {
+            next_ = EOF;
+            return;
+        }
+
+        next_ = 0;
         for (int i = 0; i < 2; ++i)
         {
             if (fs_.peek() == EOF)
             {
-                std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
-                return REPLACEMENT_CHAR;
+                throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
             }
-            c = (c << CHAR_BIT) | fs_.get();
+            next_ = (next_ << CHAR_BIT) | fs_.get();
         }
-        if (c >= 0xD800 && c < 0xBFFF)
+        if (next_ >= 0xD800 && next_ < 0xBFFF)
         {
-            c = (c & 0x03FF) << 10;
+            next_ = (next_ & 0x03FF) << 10;
             for (int i = 0; i < 2; ++i)
             {
                 if (fs_.peek() == EOF)
                 {
-                    std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
-                    return REPLACEMENT_CHAR;
+                    throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
                 }
-                c = (c << CHAR_BIT) | fs_.get();
+                next_ = (next_ << CHAR_BIT) | fs_.get();
             }
-            if ((c & 0xFFFF) < 0xDC00 || (c & 0xFFFF) >= 0xDFFF)
+            if ((next_ & 0xFFFF) < 0xDC00 || (next_ & 0xFFFF) >= 0xDFFF)
             {
-                std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
-                return REPLACEMENT_CHAR;
+                throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
             }
-            c = (c & 0xFFFF03FF) + 0x10000;
+            next_ = (next_ & 0xFFFF03FF) + 0x10000;
         }
-        else if (c >= 0xDC00 && c < 0xDFFF)
+        else if (next_ >= 0xDC00 && next_ < 0xDFFF)
         {
-            std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
-            return REPLACEMENT_CHAR;
+            throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
         }
-        return c;
     }
 }
