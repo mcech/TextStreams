@@ -6,20 +6,14 @@ class Utf16BeStreamReader : public TextStreamReader
 {
 public:
     Utf16BeStreamReader() = delete;
+    Utf16BeStreamReader(std::istream& in);
     Utf16BeStreamReader(const Utf16BeStreamReader&) = delete;
     ~Utf16BeStreamReader() override = default;
     Utf16BeStreamReader& operator=(const Utf16BeStreamReader&) = delete;
 
-    char32_t peek() override;
-    char32_t read() override;
-
 protected:
-    friend class TextStreamReader;
+    char32_t get() override;
 
-    Utf16BeStreamReader(std::istream& fs);
-
-    void advance();
-
-    std::istream& fs_;
-    char32_t next_ = EOF;
+private:
+    std::istream& in_;
 };

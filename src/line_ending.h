@@ -1,6 +1,6 @@
 #pragma once
 
-enum class LineEndings
+enum class LineEnding
 {
     DOS, ///< 0x0D0A
     MAC, ///< 0x0D

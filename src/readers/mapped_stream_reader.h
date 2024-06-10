@@ -7,21 +7,15 @@ class MappedStreamReader : public TextStreamReader
 {
 public:
     MappedStreamReader() = delete;
+    MappedStreamReader(std::istream& in, const std::unordered_map<int32_t, char32_t>& unicode_mapping);
     MappedStreamReader(const MappedStreamReader&) = delete;
     ~MappedStreamReader() override = default;
     MappedStreamReader& operator=(const MappedStreamReader&) = delete;
 
-    char32_t peek() override;
-    char32_t read() override;
+protected:
+    char32_t get() override;
 
 private:
-    friend class TextStreamReader;
-
-    MappedStreamReader(std::istream& fs, const std::unordered_map<int32_t, char32_t>& unicode_mapping);
-
-    void advance();
-
-    std::istream& fs_;
+    std::istream& in_;
     const std::unordered_map<int32_t, char32_t>& unicode_mapping_;
-    int32_t next_ = EOF;
 };
