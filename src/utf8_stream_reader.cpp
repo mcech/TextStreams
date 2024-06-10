@@ -43,7 +43,7 @@ void Utf8StreamReader::advance()
         }
         else if (leading == 1 || leading > 4)
         {
-            throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+            throw std::ios::failure("Invalid byte sequence at position " + std::to_string(fs_.tellg()));
         }
         else
         {
@@ -53,7 +53,7 @@ void Utf8StreamReader::advance()
                 b = fs_.get();
                 if (b == EOF || (b & 0x80) == 0 || (b & 0x40) != 0)
                 {
-                    throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+                    throw std::ios::failure("Invalid byte sequence at position " + std::to_string(fs_.tellg()));
                     next_ = REPLACEMENT_CHAR;
                     return;
                 }
@@ -62,7 +62,7 @@ void Utf8StreamReader::advance()
             if (c >= 0xD800 && c < 0xDFFF)
             {
                 // 0xD800 to 0xDFFF not assigned in Unicode. They are reserved to encode UTF-16
-                throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+                throw std::ios::failure("Invalid byte sequence at position " + std::to_string(fs_.tellg()));
                 next_ = REPLACEMENT_CHAR;
             }
             else

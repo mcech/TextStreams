@@ -23,12 +23,12 @@ inline BomStreamReader<T>::BomStreamReader(std::istream& fs, const std::vector<u
         int32_t c = T::fs_.get();
         if (c == EOF)
         {
-            throw std::ios::failure("invalid Byte Order Mark");
+            throw std::ios::failure("Invalid byte order mark");
         }
         prefix.push_back(c);
     }
     if (prefix != bom)
     {
-        throw std::ios::failure("invalid Byte Order Mark");
+        throw std::ios::failure("Invalid byte order mark");
     }
 }

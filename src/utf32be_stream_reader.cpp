@@ -39,18 +39,18 @@ void Utf32BeStreamReader::advance()
         {
             if (fs_.peek() == EOF)
             {
-                throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+                throw std::ios::failure("Invalid byte sequence at position " + std::to_string(fs_.tellg()));
             }
             next_ = (next_ << CHAR_BIT) | fs_.get();
         }
         if (next_ > 0x1FFFFF)
         {
-            throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+            throw std::ios::failure("Invalid byte sequence at position " + std::to_string(fs_.tellg()));
         }
         if (next_ >= 0xD800 && next_ < 0xDFFF)
         {
             // 0xD800 to 0xDFFF not assigned in Unicode. They are reserved to encode UTF-16
-            throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+            throw std::ios::failure("Invalid byte sequence at position " + std::to_string(fs_.tellg()));
         }
     }
 }

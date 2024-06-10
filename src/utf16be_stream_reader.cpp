@@ -39,7 +39,7 @@ void Utf16BeStreamReader::advance()
         {
             if (fs_.peek() == EOF)
             {
-                throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+                throw std::ios::failure("Invalid byte sequence at position " + std::to_string(fs_.tellg()));
             }
             next_ = (next_ << CHAR_BIT) | fs_.get();
         }
@@ -50,19 +50,19 @@ void Utf16BeStreamReader::advance()
             {
                 if (fs_.peek() == EOF)
                 {
-                    throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+                    throw std::ios::failure("Invalid byte sequence at position " + std::to_string(fs_.tellg()));
                 }
                 next_ = (next_ << CHAR_BIT) | fs_.get();
             }
             if ((next_ & 0xFFFF) < 0xDC00 || (next_ & 0xFFFF) >= 0xDFFF)
             {
-                throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+                throw std::ios::failure("Invalid byte sequence at position " + std::to_string(fs_.tellg()));
             }
             next_ = (next_ & 0xFFFF03FF) + 0x10000;
         }
         else if (next_ >= 0xDC00 && next_ < 0xDFFF)
         {
-            throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+            throw std::ios::failure("Invalid byte sequence at position " + std::to_string(fs_.tellg()));
         }
     }
 }
