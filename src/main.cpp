@@ -1,44 +1,37 @@
-#include "text_stream_reader.h"
+#include "charset_detector.h"
 
+#include <fstream>
 #include <iostream>
-#include <unordered_map>
+#include <string>
+#include <vector>
 
-std::unordered_map<Charset, std::string> tests =
+std::vector<std::string> files =
 {
-    {Charset::CP_437, "C:/Users/MichaelCech/TextStreams/test/ascii.txt"},
-    {Charset::CP_850, "C:/Users/MichaelCech/TextStreams/test/ascii.txt"},
-    {Charset::CP_1252, "C:/Users/MichaelCech/TextStreams/test/iso_latin.txt"},
-    {Charset::ISO_8859_15, "C:/Users/MichaelCech/TextStreams/test/iso_latin.txt"},
+    // "C:/Users/MichaelCech/TextStreams/test/ascii.txt",
+    // "C:/Users/MichaelCech/TextStreams/test/ascii.txt",
+    // "C:/Users/MichaelCech/TextStreams/test/iso_latin.txt",
+    // "C:/Users/MichaelCech/TextStreams/test/iso_latin.txt",
 
-    {Charset::UTF_8, "C:/Users/MichaelCech/TextStreams/test/utf8.txt"},
-    {Charset::UTF_16_LE, "C:/Users/MichaelCech/TextStreams/test/utf16le.txt"},
-    {Charset::UTF_16_BE, "C:/Users/MichaelCech/TextStreams/test/utf16be.txt"},
-    {Charset::UTF_32_LE, "C:/Users/MichaelCech/TextStreams/test/utf32le.txt"},
-    {Charset::UTF_32_BE, "C:/Users/MichaelCech/TextStreams/test/utf32be.txt"},
+    "C:/Users/MichaelCech/TextStreams/test/utf8.txt",
+    "C:/Users/MichaelCech/TextStreams/test/utf16le.txt",
+    "C:/Users/MichaelCech/TextStreams/test/utf16be.txt",
+    "C:/Users/MichaelCech/TextStreams/test/utf32le.txt",
+    "C:/Users/MichaelCech/TextStreams/test/utf32be.txt",
 
-    {Charset::UTF_8_BOM, "C:/Users/MichaelCech/TextStreams/test/utf8_bom.txt"},
-    {Charset::UTF_16_LE_BOM, "C:/Users/MichaelCech/TextStreams/test/utf16le_bom.txt"},
-    {Charset::UTF_16_BE_BOM, "C:/Users/MichaelCech/TextStreams/test/utf16be_bom.txt"},
-    {Charset::UTF_32_LE_BOM, "C:/Users/MichaelCech/TextStreams/test/utf32le_bom.txt"},
-    {Charset::UTF_32_BE_BOM, "C:/Users/MichaelCech/TextStreams/test/utf32be_bom.txt"}
+    // "C:/Users/MichaelCech/TextStreams/test/utf8_bom.txt",
+    // "C:/Users/MichaelCech/TextStreams/test/utf16le_bom.txt",
+    // "C:/Users/MichaelCech/TextStreams/test/utf16be_bom.txt",
+    // "C:/Users/MichaelCech/TextStreams/test/utf32le_bom.txt",
+    // "C:/Users/MichaelCech/TextStreams/test/utf32be_bom.txt"
 };
 
 int main()
 {
-    for (const auto& [cs, path] : tests)
+    for (const std::string& path : files)
     {
-        std::ifstream fs(path, std::ios_base::in | std::ios_base::binary);
-        if (!fs.is_open())
-        {
-            exit(1);
-        }
-        std::unique_ptr<TextStreamReader> reader = TextStreamReader::open(fs, cs);
-        std::u32string line = reader->read_line();
-        for (char32_t c : line)
-        {
-            std::cout << char(c);
-        }
-        std::cout << std::endl;
+        std::ifstream in(path, std::ios_base::in, std::ios_base::binary);
+        Charset cs = CharsetDetector::detect(in);
+        std::cout << path << ": " << int(cs) << std::endl;
     }
     return 0;
 }
