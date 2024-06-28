@@ -1,37 +1,20 @@
-#include "charset_detector.h"
-
+#include "readers/gzip_reader.h"
 #include <fstream>
 #include <iostream>
-#include <string>
-#include <vector>
 
-std::vector<std::string> files =
-{
-    // "C:/Users/MichaelCech/TextStreams/test/ascii.txt",
-    // "C:/Users/MichaelCech/TextStreams/test/ascii.txt",
-    // "C:/Users/MichaelCech/TextStreams/test/iso_latin.txt",
-    // "C:/Users/MichaelCech/TextStreams/test/iso_latin.txt",
-
-    "C:/Users/MichaelCech/TextStreams/test/utf8.txt",
-    "C:/Users/MichaelCech/TextStreams/test/utf16le.txt",
-    "C:/Users/MichaelCech/TextStreams/test/utf16be.txt",
-    "C:/Users/MichaelCech/TextStreams/test/utf32le.txt",
-    "C:/Users/MichaelCech/TextStreams/test/utf32be.txt",
-
-    // "C:/Users/MichaelCech/TextStreams/test/utf8_bom.txt",
-    // "C:/Users/MichaelCech/TextStreams/test/utf16le_bom.txt",
-    // "C:/Users/MichaelCech/TextStreams/test/utf16be_bom.txt",
-    // "C:/Users/MichaelCech/TextStreams/test/utf32le_bom.txt",
-    // "C:/Users/MichaelCech/TextStreams/test/utf32be_bom.txt"
-};
-
-int main()
-{
-    for (const std::string& path : files)
+int main() {
+    std::basic_ifstream<uint8_t> a("C:/Users/MichaelCech/TextStreams/test/html.gz", std::ios_base::in | std::ios_base::binary);
+    GzipReader b(a);
+    GzipReader c = {};
+    for (int i = 0; i < 80; ++i)
     {
-        std::ifstream in(path, std::ios_base::in, std::ios_base::binary);
-        Charset cs = CharsetDetector::detect(in);
-        std::cout << path << ": " << int(cs) << std::endl;
+        std::cout << char(b.get());
     }
+    c = std::move(b);
+    while (c.peek() != EOF)
+    {
+        std::cout << char(c.get());
+    }
+    std::cout << std::endl;
     return 0;
 }
