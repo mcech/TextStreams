@@ -1,0 +1,5 @@
+.vscode/*
+!.vscode/settings.json
+build/
+doc/
+report/
