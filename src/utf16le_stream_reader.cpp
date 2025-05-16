@@ -1,68 +1,54 @@
-#include "Utf16le_stream_reader.h"
+#include "utf16le_stream_reader.h"
 
-#include <iostream>
+#include <iostream>  // std::cerr, std::endl
 
-Utf16LeStreamReader::Utf16LeStreamReader(std::istream& fs) : fs_(fs)
+char32_t Utf16LeStreamReader::advance()
 {
-}
+    uint64_t pos = in_.tellg();
 
-char32_t Utf16LeStreamReader::peek()
-{
-    if (next_ == EOF)
+    if (in_.peek() == EOF)
     {
-        advance();
+        return EOF;
     }
-    return next_;
-}
 
-char32_t Utf16LeStreamReader::read()
-{
-    char32_t c = peek();
-    next_ = EOF;
-    return c;
-}
-
-void Utf16LeStreamReader::advance()
-{
-    if (next_ == EOF)
+    char32_t result = in_.get();
+    if (in_.peek() == EOF)
     {
-        uint64_t pos = fs_.tellg();
+        std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
+        result = REPLACEMENT_CHAR;
+        return result;
+    }
+    result |= (in_.get() << CHAR_BIT);
 
-        if (fs_.peek() == EOF)
-        {
-            next_ = EOF;
-            return;
-        }
-
-        next_ = 0;
+    if (result >= 0xD800 && result < 0xDBFF)
+    {
+        uint32_t high_surrogate = result;
+        uint32_t low_surrogate  = 0;
         for (int i = 0; i < 2; ++i)
         {
-            if (fs_.peek() == EOF)
+            if (in_.peek() == EOF)
             {
-                throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+                std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
+                result = REPLACEMENT_CHAR;
+                return result;
             }
-            next_ |= fs_.get() << (i * CHAR_BIT);
+            low_surrogate |= (in_.get() << (i * CHAR_BIT));
         }
-        if (next_ >= 0xD800 && next_ < 0xBFFF)
+        if ((low_surrogate & 0xFFFF) < 0xDC00 || (low_surrogate & 0xFFFF) >= 0xDFFF)
         {
-            next_ = (next_ & 0x03FF) << 10;
-            for (int i = 0; i < 2; ++i)
-            {
-                if (fs_.peek() == EOF)
-                {
-                    throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
-                }
-                next_ |= fs_.get() << (i * CHAR_BIT);
-            }
-            if ((next_ & 0xFFFF) < 0xDC00 || (next_ & 0xFFFF) >= 0xDFFF)
-            {
-                throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
-            }
-            next_ = (next_ & 0xFFFF03FF) + 0x10000;
+            std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
+            result = REPLACEMENT_CHAR;
         }
-        else if (next_ >= 0xDC00 && next_ < 0xDFFF)
+        else
         {
-            throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
+            high_surrogate &= 0x03FF;
+            low_surrogate  &= 0x03FF;
+            result = (high_surrogate << 10) + low_surrogate + 0x10000;
         }
     }
+    return result;
+}
+
+Utf16LeStreamReader::Utf16LeStreamReader(std::istream& in) noexcept : in_(in)
+{
 }

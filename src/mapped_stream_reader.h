@@ -1,7 +1,8 @@
 #pragma once
 
 #include "text_stream_reader.h"
-#include <unordered_map>
+#include <unordered_map>  // std::unordered_map
+#include <cstdio>         // EOF
 
 class MappedStreamReader : public TextStreamReader
 {
@@ -11,17 +12,14 @@ public:
     ~MappedStreamReader() override = default;
     MappedStreamReader& operator=(const MappedStreamReader&) = delete;
 
-    char32_t peek() override;
-    char32_t read() override;
+protected:
+    char32_t advance() override;
 
 private:
     friend class TextStreamReader;
 
-    MappedStreamReader(std::istream& fs, const std::unordered_map<int32_t, char32_t>& unicode_mapping);
+    MappedStreamReader(std::istream& in, const std::unordered_map<int, char32_t>& unicode_mapping) noexcept;
 
-    void advance();
-
-    std::istream& fs_;
-    const std::unordered_map<int32_t, char32_t>& unicode_mapping_;
-    int32_t next_ = EOF;
+    std::istream& in_;
+    const std::unordered_map<int, char32_t>& unicode_mapping_;
 };

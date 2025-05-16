@@ -10,16 +10,15 @@ public:
     ~Utf8StreamReader() override = default;
     Utf8StreamReader& operator=(const Utf8StreamReader&) = delete;
 
-    char32_t peek() override;
-    char32_t read() override;
-
 protected:
+    char32_t advance() override;
+
+private:
     friend class TextStreamReader;
 
-    Utf8StreamReader(std::istream& fs);
+    explicit Utf8StreamReader(std::istream& in) noexcept;
 
-    void advance();
+    char32_t read_composed(uint8_t prefix, size_t consecutives);
 
-    std::istream& fs_;
-    char32_t next_ = EOF;
+    std::istream& in_;
 };

@@ -1,56 +1,41 @@
 #include "utf32le_stream_reader.h"
 
-#include <iostream>
+#include <iostream>  // std::cerr, std::endl
 
-Utf32LeStreamReader::Utf32LeStreamReader(std::istream& fs) : fs_(fs)
+char32_t Utf32LeStreamReader::advance()
 {
-}
+    uint64_t pos = in_.tellg();
 
-char32_t Utf32LeStreamReader::peek()
-{
-    if (next_ == EOF)
+    if (in_.peek() == EOF)
     {
-        advance();
+        return EOF;
     }
-    return next_;
-}
 
-char32_t Utf32LeStreamReader::read()
-{
-    char32_t c = peek();
-    next_ = EOF;
-    return c;
-}
-
-void Utf32LeStreamReader::advance()
-{
-    if (next_ == EOF)
+    char32_t result = 0;
+    for (int i = 0; i < 4; ++i)
     {
-        uint64_t pos = fs_.tellg();
-
-        if (fs_.peek() == EOF)
+        if (in_.peek() == EOF)
         {
-            next_ = EOF;
-            return;
+            std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
+            result = REPLACEMENT_CHAR;
+            return result;
         }
-
-        next_ = 0;
-        for (int i = 0; i < 4; ++i)
-        {
-            if (fs_.peek() == EOF)
-            {
-                throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
-            }
-            next_ |= fs_.get() << (i * CHAR_BIT);
-        }
-        if (next_ > 0x1FFFFF)
-        {
-            throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
-        }
-        if (next_ >= 0xD800 && next_ < 0xDFFF)
-        {
-            // 0xD800 to 0xDFFF not assigned in Unicode. They are reserved to encode UTF-16
-            throw std::ios::failure("Warning: invalid byte sequence at position " + std::to_string(fs_.tellg()));
-        }
+        result |= in_.get() << (i * CHAR_BIT);
     }
+    if (result >= 0xD800 && result <= 0xDFFF)
+    {
+        // 0xD800 to 0xDFFF not assigned in Unicode. They are reserved to encode UTF-16.
+        std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
+        result = REPLACEMENT_CHAR;
+    }
+    else if (result > 0x0010FFFF)
+    {
+        std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
+        result = REPLACEMENT_CHAR;
+    }
+    return result;
+}
+
+Utf32LeStreamReader::Utf32LeStreamReader(std::istream& in) noexcept : in_(in)
+{
 }

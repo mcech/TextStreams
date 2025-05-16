@@ -1,6 +1,7 @@
 #pragma once
 
 #include "text_stream_reader.h"
+#include <cstdio>  // EOF
 
 class Utf32LeStreamReader : public TextStreamReader
 {
@@ -10,16 +11,13 @@ public:
     ~Utf32LeStreamReader() override = default;
     Utf32LeStreamReader& operator=(const Utf32LeStreamReader&) = delete;
 
-    char32_t peek() override;
-    char32_t read() override;
-
 protected:
+    char32_t advance() override;
+
+private:
     friend class TextStreamReader;
 
-    Utf32LeStreamReader(std::istream& fs);
+    explicit Utf32LeStreamReader(std::istream& in) noexcept;
 
-    void advance();
-
-    std::istream& fs_;
-    char32_t next_ = EOF;
+    std::istream& in_;
 };
