@@ -23,6 +23,6 @@ char32_t MappedStreamReader::advance()
     return result;
 }
 
-MappedStreamReader::MappedStreamReader(std::istream& in, const std::unordered_map<int, char32_t>& unicode_mapping) noexcept : in_(in), unicode_mapping_(unicode_mapping)
+MappedStreamReader::MappedStreamReader(std::istream& in, const std::unordered_map<uint8_t, char32_t>& unicode_mapping) noexcept : in_(in), unicode_mapping_(unicode_mapping)
 {
 }

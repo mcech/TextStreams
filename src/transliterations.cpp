@@ -1,23 +1,20 @@
-#include <unordered_map>
+#include "transliterations.h"
 
-std::unordered_map<int, const char*> transliterations = 
+const std::unordered_map<char32_t, const char*> transliterations = 
 {
     {0x00A0, " "},        // no-break space
     {0x00A1, "!"},        // inverted exclamation mark
     {0x00A2, "c"},        // cent sign
     {0x00A3, "lb"},       // pound sign
-    {0x00A4, ""},         // currency sign
     {0x00A5, "yen"},      // yen sign
     {0x00A6, "|"},        // broken bar
     {0x00A7, "SS"},       // section sign
-    {0x00A8, "\""},       // diaeresis
     {0x00A9, "(c)"},      // copyright sign
     {0x00AA, "a"},        // feminine ordinal indicator
     {0x00AB, "<<"},       // left-pointing double angle quotation mark
     {0x00AC, "not"},      // not sign
     {0x00AD, "-"},        // soft hyphen
     {0x00AE, "(R)"},      // registered sign
-    {0x00AF, ""},         // macron
     {0x00B0, "^0"},       // degree sign
     {0x00B1, "+/-"},      // plus-minus sign
     {0x00B2, "^2"},       // superscript two
@@ -137,7 +134,6 @@ std::unordered_map<int, const char*> transliterations =
     {0x0135, "^j"},       // latin small letter j with circumflex
     {0x0136, "K"},        // latin capital letter k with cedilla
     {0x0137, "k"},        // latin small letter k with cedilla
-    {0x0138, ""},         // latin small letter kra
     {0x0139, "L"},        // latin capital letter l with acute
     {0x013A, "l"},        // latin small letter l with acute
     {0x013B, "L"},        // latin capital letter l with cedilla
@@ -153,8 +149,6 @@ std::unordered_map<int, const char*> transliterations =
     {0x0147, "N"},        // latin capital letter n with caron
     {0x0148, "n"},        // latin small letter n with caron
     {0x0149, "'n"},       // latin small letter n preceded by apostrophe
-    {0x014A, ""},         // latin capital letter eng
-    {0x014B, ""},         // latin small letter eng
     {0x014C, "O"},        // latin capital letter o with macron
     {0x014D, "o"},        // latin small letter o with macron
     {0x014E, "O"},        // latin capital letter o with breve
@@ -201,7 +195,6 @@ std::unordered_map<int, const char*> transliterations =
     {0x017D, "Z"},        // latin capital letter z with caron
     {0x017E, "z"},        // latin small letter z with caron
     {0x017F, "s"},        // latin small letter long s
-    {0x018F, ""},         // latin capital letter schwa
     {0x0192, "f"},        // latin small letter f with hook
     {0x01C7, "LJ"},       // latin capital letter lj
     {0x01C8, "Lj"},       // latin capital letter l with small letter j
@@ -216,215 +209,12 @@ std::unordered_map<int, const char*> transliterations =
     {0x0219, "s"},        // latin small letter s with comma below
     {0x021A, "T"},        // latin capital letter t with comma below
     {0x021B, "t"},        // latin small letter t with comma below
-    {0x0259, ""},         // latin small letter schwa
     {0x02C6, "^"},        // modifier letter circumflex accent
-    {0x02C7, ""},         // caron
     {0x02C8, "'"},        // modifier letter vertical line
     {0x02CB, "`"},        // modifier letter grave accent
     {0x02CD, "_"},        // modifier letter low macron
-    {0x02D8, ""},         // breve
-    {0x02D9, ""},         // dot above
-    {0x02DA, ""},         // ring above
-    {0x02DB, ""},         // ogonek
     {0x02DC, "~"},        // small tilde
     {0x02DD, "\""},       // double acute accent
-    {0x0374, ""},         // greek numeral sign
-    {0x0375, ""},         // greek lower numeral sign
-    {0x037A, ""},         // greek ypogegrammeni
-    {0x037E, ""},         // greek question mark
-    {0x0384, ""},         // greek tonos
-    {0x0385, ""},         // greek dialytika tonos
-    {0x0386, ""},         // greek capital letter alpha with tonos
-    {0x0387, ""},         // greek ano teleia
-    {0x0388, ""},         // greek capital letter epsilon with tonos
-    {0x0389, ""},         // greek capital letter eta with tonos
-    {0x038A, ""},         // greek capital letter iota with tonos
-    {0x038C, ""},         // greek capital letter omicron with tonos
-    {0x038E, ""},         // greek capital letter upsilon with tonos
-    {0x038F, ""},         // greek capital letter omega with tonos
-    {0x0390, ""},         // greek small letter iota with dialytika and tonos
-    {0x0391, ""},         // greek capital letter alpha
-    {0x0392, ""},         // greek capital letter beta
-    {0x0393, ""},         // greek capital letter gamma
-    {0x0394, ""},         // greek capital letter delta
-    {0x0395, ""},         // greek capital letter epsilon
-    {0x0396, ""},         // greek capital letter zeta
-    {0x0397, ""},         // greek capital letter eta
-    {0x0398, ""},         // greek capital letter theta
-    {0x0399, ""},         // greek capital letter iota
-    {0x039A, ""},         // greek capital letter kappa
-    {0x039B, ""},         // greek capital letter lamda
-    {0x039C, ""},         // greek capital letter mu
-    {0x039D, ""},         // greek capital letter nu
-    {0x039E, ""},         // greek capital letter xi
-    {0x039F, ""},         // greek capital letter omicron
-    {0x03A0, ""},         // greek capital letter pi
-    {0x03A1, ""},         // greek capital letter rho
-    {0x03A3, ""},         // greek capital letter sigma
-    {0x03A4, ""},         // greek capital letter tau
-    {0x03A5, ""},         // greek capital letter upsilon
-    {0x03A6, ""},         // greek capital letter phi
-    {0x03A7, ""},         // greek capital letter chi
-    {0x03A8, ""},         // greek capital letter psi
-    {0x03A9, ""},         // greek capital letter omega
-    {0x03AA, ""},         // greek capital letter iota with dialytika
-    {0x03AB, ""},         // greek capital letter upsilon with dialytika
-    {0x03AC, ""},         // greek small letter alpha with tonos
-    {0x03AD, ""},         // greek small letter epsilon with tonos
-    {0x03AE, ""},         // greek small letter eta with tonos
-    {0x03AF, ""},         // greek small letter iota with tonos
-    {0x03B0, ""},         // greek small letter upsilon with dialytika and tonos
-    {0x03B1, ""},         // greek small letter alpha
-    {0x03B2, ""},         // greek small letter beta
-    {0x03B3, ""},         // greek small letter gamma
-    {0x03B4, ""},         // greek small letter delta
-    {0x03B5, ""},         // greek small letter epsilon
-    {0x03B6, ""},         // greek small letter zeta
-    {0x03B7, ""},         // greek small letter eta
-    {0x03B8, ""},         // greek small letter theta
-    {0x03B9, ""},         // greek small letter iota
-    {0x03BA, ""},         // greek small letter kappa
-    {0x03BB, ""},         // greek small letter lamda
-    {0x03BC, ""},         // greek small letter mu
-    {0x03BD, ""},         // greek small letter nu
-    {0x03BE, ""},         // greek small letter xi
-    {0x03BF, ""},         // greek small letter omicron
-    {0x03C0, ""},         // greek small letter pi
-    {0x03C1, ""},         // greek small letter rho
-    {0x03C2, ""},         // greek small letter final sigma
-    {0x03C3, ""},         // greek small letter sigma
-    {0x03C4, ""},         // greek small letter tau
-    {0x03C5, ""},         // greek small letter upsilon
-    {0x03C6, ""},         // greek small letter phi
-    {0x03C7, ""},         // greek small letter chi
-    {0x03C8, ""},         // greek small letter psi
-    {0x03C9, ""},         // greek small letter omega
-    {0x03CA, ""},         // greek small letter iota with dialytika
-    {0x03CB, ""},         // greek small letter upsilon with dialytika
-    {0x03CC, ""},         // greek small letter omicron with tonos
-    {0x03CD, ""},         // greek small letter upsilon with tonos
-    {0x03CE, ""},         // greek small letter omega with tonos
-    {0x0401, ""},         // cyrillic capital letter io
-    {0x0402, ""},         // cyrillic capital letter dje
-    {0x0403, ""},         // cyrillic capital letter gje
-    {0x0404, ""},         // cyrillic capital letter ukrainian ie
-    {0x0405, ""},         // cyrillic capital letter dze
-    {0x0406, ""},         // cyrillic capital letter byelorussian-ukrainian i
-    {0x0407, ""},         // cyrillic capital letter yi
-    {0x0408, ""},         // cyrillic capital letter je
-    {0x0409, ""},         // cyrillic capital letter lje
-    {0x040A, ""},         // cyrillic capital letter nje
-    {0x040B, ""},         // cyrillic capital letter tshe
-    {0x040C, ""},         // cyrillic capital letter kje
-    {0x040E, ""},         // cyrillic capital letter short u
-    {0x040F, ""},         // cyrillic capital letter dzhe
-    {0x0410, ""},         // cyrillic capital letter a
-    {0x0411, ""},         // cyrillic capital letter be
-    {0x0412, ""},         // cyrillic capital letter ve
-    {0x0413, ""},         // cyrillic capital letter ghe
-    {0x0414, ""},         // cyrillic capital letter de
-    {0x0415, ""},         // cyrillic capital letter ie
-    {0x0416, ""},         // cyrillic capital letter zhe
-    {0x0417, ""},         // cyrillic capital letter ze
-    {0x0418, ""},         // cyrillic capital letter i
-    {0x0419, ""},         // cyrillic capital letter short i
-    {0x041A, ""},         // cyrillic capital letter ka
-    {0x041B, ""},         // cyrillic capital letter el
-    {0x041C, ""},         // cyrillic capital letter em
-    {0x041D, ""},         // cyrillic capital letter en
-    {0x041E, ""},         // cyrillic capital letter o
-    {0x041F, ""},         // cyrillic capital letter pe
-    {0x0420, ""},         // cyrillic capital letter er
-    {0x0421, ""},         // cyrillic capital letter es
-    {0x0422, ""},         // cyrillic capital letter te
-    {0x0423, ""},         // cyrillic capital letter u
-    {0x0424, ""},         // cyrillic capital letter ef
-    {0x0425, ""},         // cyrillic capital letter ha
-    {0x0426, ""},         // cyrillic capital letter tse
-    {0x0427, ""},         // cyrillic capital letter che
-    {0x0428, ""},         // cyrillic capital letter sha
-    {0x0429, ""},         // cyrillic capital letter shcha
-    {0x042A, ""},         // cyrillic capital letter hard sign
-    {0x042B, ""},         // cyrillic capital letter yeru
-    {0x042C, ""},         // cyrillic capital letter soft sign
-    {0x042D, ""},         // cyrillic capital letter e
-    {0x042E, ""},         // cyrillic capital letter yu
-    {0x042F, ""},         // cyrillic capital letter ya
-    {0x0430, ""},         // cyrillic small letter a
-    {0x0431, ""},         // cyrillic small letter be
-    {0x0432, ""},         // cyrillic small letter ve
-    {0x0433, ""},         // cyrillic small letter ghe
-    {0x0434, ""},         // cyrillic small letter de
-    {0x0435, ""},         // cyrillic small letter ie
-    {0x0436, ""},         // cyrillic small letter zhe
-    {0x0437, ""},         // cyrillic small letter ze
-    {0x0438, ""},         // cyrillic small letter i
-    {0x0439, ""},         // cyrillic small letter short i
-    {0x043A, ""},         // cyrillic small letter ka
-    {0x043B, ""},         // cyrillic small letter el
-    {0x043C, ""},         // cyrillic small letter em
-    {0x043D, ""},         // cyrillic small letter en
-    {0x043E, ""},         // cyrillic small letter o
-    {0x043F, ""},         // cyrillic small letter pe
-    {0x0440, ""},         // cyrillic small letter er
-    {0x0441, ""},         // cyrillic small letter es
-    {0x0442, ""},         // cyrillic small letter te
-    {0x0443, ""},         // cyrillic small letter u
-    {0x0444, ""},         // cyrillic small letter ef
-    {0x0445, ""},         // cyrillic small letter ha
-    {0x0446, ""},         // cyrillic small letter tse
-    {0x0447, ""},         // cyrillic small letter che
-    {0x0448, ""},         // cyrillic small letter sha
-    {0x0449, ""},         // cyrillic small letter shcha
-    {0x044A, ""},         // cyrillic small letter hard sign
-    {0x044B, ""},         // cyrillic small letter yeru
-    {0x044C, ""},         // cyrillic small letter soft sign
-    {0x044D, ""},         // cyrillic small letter e
-    {0x044E, ""},         // cyrillic small letter yu
-    {0x044F, ""},         // cyrillic small letter ya
-    {0x0451, ""},         // cyrillic small letter io
-    {0x0452, ""},         // cyrillic small letter dje
-    {0x0453, ""},         // cyrillic small letter gje
-    {0x0454, ""},         // cyrillic small letter ukrainian ie
-    {0x0455, ""},         // cyrillic small letter dze
-    {0x0456, ""},         // cyrillic small letter byelorussian-ukrainian i
-    {0x0457, ""},         // cyrillic small letter yi
-    {0x0458, ""},         // cyrillic small letter je
-    {0x0459, ""},         // cyrillic small letter lje
-    {0x045A, ""},         // cyrillic small letter nje
-    {0x045B, ""},         // cyrillic small letter tshe
-    {0x045C, ""},         // cyrillic small letter kje
-    {0x045E, ""},         // cyrillic small letter short u
-    {0x045F, ""},         // cyrillic small letter dzhe
-    {0x0490, ""},         // cyrillic capital letter ghe with upturn
-    {0x0491, ""},         // cyrillic small letter ghe with upturn
-    {0x05D0, ""},         // hebrew letter alef
-    {0x05D1, ""},         // hebrew letter bet
-    {0x05D2, ""},         // hebrew letter gimel
-    {0x05D3, ""},         // hebrew letter dalet
-    {0x05D4, ""},         // hebrew letter he
-    {0x05D5, ""},         // hebrew letter vav
-    {0x05D6, ""},         // hebrew letter zayin
-    {0x05D7, ""},         // hebrew letter het
-    {0x05D8, ""},         // hebrew letter tet
-    {0x05D9, ""},         // hebrew letter yod
-    {0x05DA, ""},         // hebrew letter final kaf
-    {0x05DB, ""},         // hebrew letter kaf
-    {0x05DC, ""},         // hebrew letter lamed
-    {0x05DD, ""},         // hebrew letter final mem
-    {0x05DE, ""},         // hebrew letter mem
-    {0x05DF, ""},         // hebrew letter final nun
-    {0x05E0, ""},         // hebrew letter nun
-    {0x05E1, ""},         // hebrew letter samekh
-    {0x05E2, ""},         // hebrew letter ayin
-    {0x05E3, ""},         // hebrew letter final pe
-    {0x05E4, ""},         // hebrew letter pe
-    {0x05E5, ""},         // hebrew letter final tsadi
-    {0x05E6, ""},         // hebrew letter tsadi
-    {0x05E7, ""},         // hebrew letter qof
-    {0x05E8, ""},         // hebrew letter resh
-    {0x05E9, ""},         // hebrew letter shin
-    {0x05EA, ""},         // hebrew letter tav
     {0x1E02, "B"},        // latin capital letter b with dot above
     {0x1E03, "b"},        // latin small letter b with dot above
     {0x1E0A, "D"},        // latin capital letter d with dot above
@@ -459,8 +249,8 @@ std::unordered_map<int, const char*> transliterations =
     {0x2013, "-"},        // en dash
     {0x2014, "-"},        // em dash
     {0x2015, "-"},        // horizontal bar
-    {0x2016, ""},         // double vertical line
-    {0x2017, ""},         // double low line
+    {0x2016, "||"},       // double vertical line
+    {0x2017, "_"},        // double low line
     {0x2018, "'"},        // left single quotation mark
     {0x2019, "'"},        // right single quotation mark
     {0x201A, ","},        // single low-9 quotation mark
@@ -470,7 +260,7 @@ std::unordered_map<int, const char*> transliterations =
     {0x201E, "\""},       // double low-9 quotation mark
     {0x201F, "\""},       // double high-reversed-9 quotation mark
     {0x2020, "+"},        // dagger
-    {0x2021, ""},         // double dagger
+    {0x2021, "++"},       // double dagger
     {0x2022, "o"},        // bullet
     {0x2024, "."},        // one dot leader
     {0x2025, ".."},       // two dot leader
@@ -479,7 +269,6 @@ std::unordered_map<int, const char*> transliterations =
     {0x2039, "<"},        // single left-pointing angle quotation mark
     {0x203A, ">"},        // single right-pointing angle quotation mark
     {0x203C, "!!"},       // double exclamation mark
-    {0x203E, ""},         // overline
     {0x2044, "/"},        // fraction slash
     {0x2047, "??"},       // double question mark
     {0x2048, "?!"},       // question exclamation mark
@@ -766,11 +555,7 @@ std::unordered_map<int, const char*> transliterations =
     {0x252C, "+"},        // box drawings light down and horizontal
     {0x2534, "+"},        // box drawings light up and horizontal
     {0x253C, "+"},        // box drawings light vertical and horizontal
-    {0x2592, ""},         // medium shade
-    {0x25AE, ""},         // black vertical rectangle
-    {0x25C6, ""},         // black diamond
     {0x25E6, "o"},        // white bullet
-    {0x266A, ""},         // eighth note
     {0x2A74, "::="},      // double colon equal
     {0x2A75, "=="},       // two consecutive equals signs
     {0x2A76, "==="},      // three consecutive equals signs

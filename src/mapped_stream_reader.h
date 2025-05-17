@@ -2,7 +2,6 @@
 
 #include "text_stream_reader.h"
 #include <unordered_map>  // std::unordered_map
-#include <cstdio>         // EOF
 
 class MappedStreamReader : public TextStreamReader
 {
@@ -18,8 +17,8 @@ protected:
 private:
     friend class TextStreamReader;
 
-    MappedStreamReader(std::istream& in, const std::unordered_map<int, char32_t>& unicode_mapping) noexcept;
+    MappedStreamReader(std::istream& in, const std::unordered_map<uint8_t, char32_t>& unicode_mapping) noexcept;
 
     std::istream& in_;
-    const std::unordered_map<int, char32_t>& unicode_mapping_;
+    const std::unordered_map<uint8_t, char32_t>& unicode_mapping_;
 };
