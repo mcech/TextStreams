@@ -20,11 +20,11 @@ char32_t Utf32BeStreamReader::advance()
             result = REPLACEMENT_CHAR;
             return result;
         }
-        result = (result << CHAR_BIT) | in_.get();
+        result = (result << 8) | in_.get();
     }
     if (result >= 0xD800 && result <= 0xDFFF)
     {
-        // 0xD800 to 0xDFFF not assigned in Unicode. They are reserved to encode UTF-16.
+        // Codepoints 0xD800 to 0xDFFF are not assigned in Unicode. They are reserved to encode UTF-16.
         std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
         result = REPLACEMENT_CHAR;
     }

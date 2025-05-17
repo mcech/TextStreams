@@ -34,13 +34,13 @@ char32_t Utf8StreamReader::advance()
 
         if (result >= 0xD800 && result <= 0xDFFF)
         {
-            // 0xD800 to 0xDFFF not assigned in Unicode. They are reserved to encode UTF-16.
+            // Codepoints 0xD800 to 0xDFFF are not assigned in Unicode. They are reserved to encode UTF-16.
             std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
             result = REPLACEMENT_CHAR;
         }
         else if (result > 0x0010FFFF)
         {
-            // Codepoints beyond 0x0010FFFF not assigned in Unicode.
+            // Codepoints beyond 0x0010FFFF are not assigned in Unicode.
             std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
             result = REPLACEMENT_CHAR;
         }

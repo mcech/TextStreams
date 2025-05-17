@@ -18,7 +18,7 @@ char32_t Utf16LeStreamReader::advance()
         result = REPLACEMENT_CHAR;
         return result;
     }
-    result |= (in_.get() << CHAR_BIT);
+    result |= (in_.get() << 8);
 
     if (result >= 0xD800 && result < 0xDBFF)
     {
@@ -32,7 +32,7 @@ char32_t Utf16LeStreamReader::advance()
                 result = REPLACEMENT_CHAR;
                 return result;
             }
-            low_surrogate |= (in_.get() << (i * CHAR_BIT));
+            low_surrogate |= (in_.get() << (i * 8));
         }
         if ((low_surrogate & 0xFFFF) < 0xDC00 || (low_surrogate & 0xFFFF) >= 0xDFFF)
         {

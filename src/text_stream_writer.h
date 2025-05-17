@@ -2,16 +2,18 @@
 
 #include "charset.h"
 #include "line_endings.h"
-#include <memory>
-#include <string>
+#include <memory>   // std::unique_ptr
+#include <ostream>  // std::ostream
+#include <string>   // std::u32string
 
 class TextStreamWriter
 {
 public:
-    static std::unique_ptr<TextStreamWriter> open(std::string path, Charset cs = Charset::UTF_8, LineEndings nl = LineEndings::UNIX);
+    static std::unique_ptr<TextStreamWriter> create(std::ostream& out, Charset cs = Charset::UTF_8, LineEndings nl = LineEndings::UNIX);
 
+    TextStreamWriter() = delete;
     TextStreamWriter(const TextStreamWriter&) = delete;
-    virtual ~TextStreamWriter() = default;
+    virtual ~TextStreamWriter() = default;  // LCOV_EXCL_LINE
     TextStreamWriter& operator=(const TextStreamWriter&) = delete;
 
     virtual void write(char32_t c) = 0;
@@ -19,7 +21,8 @@ public:
     virtual void write_line(const std::u32string& str);
 
 protected:
-    TextStreamWriter(LineEndings nl) noexcept;
+    TextStreamWriter(LineEndings nl);
 
-    LineEndings nl;
+private:
+    const std::u32string* newline_;
 };

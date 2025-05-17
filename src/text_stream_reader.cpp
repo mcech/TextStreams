@@ -4,13 +4,13 @@
 
 #include "text_stream_reader.h"
 
+#include "bom.h"
 #include "mapped_stream_reader.h"
 #include "utf8_stream_reader.h"
 #include "utf16le_stream_reader.h"
 #include "utf16be_stream_reader.h"
 #include "utf32le_stream_reader.h"
 #include "utf32be_stream_reader.h"
-#include <array>      // std::array
 #include <stdexcept>  // std::invalid_argument
 
 template <class BOM>
@@ -18,31 +18,23 @@ void checkBOM(std::istream& in, const BOM& bom);
 
 namespace
 {
-    constexpr std::array<uint8_t, 3> BOM_UTF8     = {0xEF, 0xBB, 0xBF};
-    constexpr std::array<uint8_t, 2> BOM_UTF16_LE = {0xFF, 0xFE};
-    constexpr std::array<uint8_t, 2> BOM_UTF16_BE = {0xFE, 0xFF};
-    constexpr std::array<uint8_t, 4> BOM_UTF32_LE = {0xFF, 0xFE, 0x00, 0x00};
-    constexpr std::array<uint8_t, 4> BOM_UTF32_BE = {0x00, 0x00, 0xFE, 0xFF};
-    
-    extern const std::unordered_map<int, char32_t> MAPPING_CP_437;
-    extern const std::unordered_map<int, char32_t> MAPPING_CP_850;
-    extern const std::unordered_map<int, char32_t> MAPPING_CP_1252;
-    extern const std::unordered_map<int, char32_t> MAPPING_ISO_8859_15;
-    
+    extern const std::unordered_map<uint8_t, char32_t> MAPPING_CP_437;
+    extern const std::unordered_map<uint8_t, char32_t> MAPPING_CP_850;
+    extern const std::unordered_map<uint8_t, char32_t> MAPPING_CP_1252;
+    extern const std::unordered_map<uint8_t, char32_t> MAPPING_ISO_8859_15;
+
     const std::invalid_argument UNKNOWN_CHARSET("Unknown character set");
     const std::ios::failure INVALID_BOM("Invalid Byte Order Mark");
 }
 
-std::unique_ptr<TextStreamReader> TextStreamReader::open(std::istream& in, Charset cs)
+
+std::unique_ptr<TextStreamReader> TextStreamReader::create(std::istream& in, Charset cs)
 {
     std::unique_ptr<TextStreamReader> result;
-    MappedStreamReader* x;
     switch (cs)
     {
     case Charset::CP_437:
-        x = (MappedStreamReader*) operator new(sizeof(MappedStreamReader));
-        new (x) MappedStreamReader(in, MAPPING_CP_437);
-        result.reset(x);
+        result.reset(new MappedStreamReader(in, MAPPING_CP_437));
         break;
     case Charset::CP_850:
         result.reset(new MappedStreamReader(in, MAPPING_CP_850));
@@ -158,7 +150,7 @@ void checkBOM(std::istream& in, const BOM& bom)
 
 namespace
 {
-    const std::unordered_map<int, char32_t> MAPPING_CP_437 =
+    const std::unordered_map<uint8_t, char32_t> MAPPING_CP_437 =
     {
         {0x00, 0x0000}, {0x01, 0x263A}, {0x02, 0x263B}, {0x03, 0x2655}, {0x04, 0x2666}, {0x05, 0x2663}, {0x06, 0x2660}, {0x07, 0x2022},
         {0x08, 0x25D8}, {0x09, 0x0009}, {0x0A, 0x000A}, {0x0B, 0x000B}, {0x0C, 0x000C}, {0x0D, 0x000D}, {0x0E, 0x266B}, {0x0F, 0x263C},
@@ -194,7 +186,7 @@ namespace
         {0xF8, 0x00B0}, {0xF9, 0x2219}, {0xFA, 0x00B7}, {0xFB, 0x221A}, {0xFC, 0x207F}, {0xFD, 0x00B2}, {0xFE, 0x25A0}, {0xFF, 0x00A0}
     };
 
-    const std::unordered_map<int, char32_t> MAPPING_CP_850 =
+    const std::unordered_map<uint8_t, char32_t> MAPPING_CP_850 =
     {
         {0x00, 0x0000}, {0x01, 0x263A}, {0x02, 0x263B}, {0x03, 0x2655}, {0x04, 0x2666}, {0x05, 0x2663}, {0x06, 0x2660}, {0x07, 0x2022},
         {0x08, 0x25D8}, {0x09, 0x0009}, {0x0A, 0x000A}, {0x0B, 0x000B}, {0x0C, 0x000C}, {0x0D, 0x000D}, {0x0E, 0x266B}, {0x0F, 0x263C},
@@ -230,7 +222,7 @@ namespace
         {0xF8, 0x00B0}, {0xF9, 0x00A8}, {0xFA, 0x00B7}, {0xFB, 0x00B9}, {0xFC, 0x00B3}, {0xFD, 0x00B2}, {0xFE, 0x25A0}, {0xFF, 0x00A0}
     };
 
-    const std::unordered_map<int, char32_t> MAPPING_CP_1252 =
+    const std::unordered_map<uint8_t, char32_t> MAPPING_CP_1252 =
     {
         {0x00, 0x0000}, /*   0x01   */  /*   0x02   */  /*   0x03   */  /*   0x04   */  /*   0x05   */  /*   0x06   */  /*   0x07   */
         /*   0x08   */  {0x09, 0x0009}, {0x0A, 0x000A}, {0x0B, 0x000B}, {0x0C, 0x000C}, {0x0D, 0x000D}, /*   0x0E   */  /*   0x0F   */
@@ -266,7 +258,7 @@ namespace
         {0xF8, 0x00F8}, {0xF9, 0x00F9}, {0xFA, 0x00FA}, {0xFB, 0x00FB}, {0xFC, 0x00FC}, {0xFD, 0x00FD}, {0xFE, 0x00FE}, {0xFF, 0x00FF}
     };
 
-    const std::unordered_map<int, char32_t> MAPPING_ISO_8859_15 =
+    const std::unordered_map<uint8_t, char32_t> MAPPING_ISO_8859_15 =
     {
         {0x00, 0x0000}, /*   0x01   */  /*   0x02   */  /*   0x03   */  /*   0x04   */  /*   0x05   */  /*   0x06   */  /*   0x07   */
         /*   0x08   */  {0x09, 0x0009}, {0x0A, 0x000A}, {0x0B, 0x000B}, {0x0C, 0x000C}, {0x0D, 0x000D}, /*   0x0E   */  /*   0x0F   */

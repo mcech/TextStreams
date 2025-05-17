@@ -11,7 +11,7 @@ char32_t Utf16BeStreamReader::advance()
         return EOF;
     }
 
-    char32_t result = in_.get() << CHAR_BIT;
+    char32_t result = in_.get() << 8;
     if (in_.peek() == EOF)
     {
         std::cerr << "Warning: invalid byte sequence at position " << pos << std::endl;
@@ -32,7 +32,7 @@ char32_t Utf16BeStreamReader::advance()
                 result = REPLACEMENT_CHAR;
                 return result;
             }
-            low_surrogate = (low_surrogate << CHAR_BIT) | in_.get();
+            low_surrogate = (low_surrogate << 8) | in_.get();
         }
         if (low_surrogate < 0xDC00 || low_surrogate > 0xDFFF)
         {

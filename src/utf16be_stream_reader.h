@@ -1,7 +1,6 @@
 #pragma once
 
 #include "text_stream_reader.h"
-#include <cstdio>  // EOF
 
 class Utf16BeStreamReader : public TextStreamReader
 {
