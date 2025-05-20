@@ -1,6 +1,9 @@
 #include "gtest/gtest.h"
 
+#include "bom.h"
 #include "text_stream_reader.h"
+#include "text_stream_writer.h"
+#include "throwing_streambuf.h"
 #include <sstream>
 #include <string>
 
@@ -103,3 +106,87 @@ TEST(Reader_BOM, utf32be)
     iss.str(input);
     EXPECT_THROW(TextStreamReader::create(iss, Charset::UTF_32_BE_BOM), std::ios::failure);
 }
+
+TEST(Writer_BOM, utf8)
+{
+    std::ostringstream oss;
+    std::unique_ptr<TextStreamWriter> writer = TextStreamWriter::create(oss, Charset::UTF_8_BOM);
+    EXPECT_EQ(memcmp(oss.str().data(), BOM_UTF8.data(), BOM_UTF8.size()), 0);
+}
+
+TEST(Writer_BOM, utf16le)
+{
+    std::ostringstream oss;
+    std::unique_ptr<TextStreamWriter> writer = TextStreamWriter::create(oss, Charset::UTF_16_LE_BOM);
+    EXPECT_EQ(memcmp(oss.str().data(), BOM_UTF16_LE.data(), BOM_UTF16_LE.size()), 0);
+}
+
+TEST(Writer_BOM, utf16be)
+{
+    std::ostringstream oss;
+    std::unique_ptr<TextStreamWriter> writer = TextStreamWriter::create(oss, Charset::UTF_16_BE_BOM);
+    EXPECT_EQ(memcmp(oss.str().data(), BOM_UTF16_BE.data(), BOM_UTF16_BE.size()), 0);
+}
+
+TEST(Writer_BOM, utf32le)
+{
+    std::ostringstream oss;
+    std::unique_ptr<TextStreamWriter> writer = TextStreamWriter::create(oss, Charset::UTF_32_LE_BOM);
+    EXPECT_EQ(memcmp(oss.str().data(), BOM_UTF32_LE.data(), BOM_UTF32_LE.size()), 0);
+}
+
+TEST(Writer_BOM, utf32be)
+{
+    std::ostringstream oss;
+    std::unique_ptr<TextStreamWriter> writer = TextStreamWriter::create(oss, Charset::UTF_32_BE_BOM);
+    EXPECT_EQ(memcmp(oss.str().data(), BOM_UTF32_BE.data(), BOM_UTF32_BE.size()), 0);
+}
+
+TEST(Writer_BOM, utf8_failure)
+{
+    std::string buffer = "    ";
+    ThrowingStreambuf streambuf(buffer, 0);
+    std::ostream os(&streambuf);
+    os.exceptions(std::ios_base::failbit | std::ios_base::badbit);
+    EXPECT_THROW(TextStreamWriter::create(os, Charset::UTF_8_BOM), std::ios::failure);
+}
+
+TEST(Writer_BOM, utf16le_failure)
+{
+    std::string buffer = "    ";
+    ThrowingStreambuf streambuf(buffer, 0);
+    std::ostream os(&streambuf);
+    os.exceptions(std::ios_base::failbit | std::ios_base::badbit);
+    EXPECT_THROW(TextStreamWriter::create(os, Charset::UTF_16_LE_BOM), std::ios::failure);
+}
+
+TEST(Writer_BOM, utf16be_failure)
+{
+    std::string buffer = "    ";
+    ThrowingStreambuf streambuf(buffer, 0);
+    std::ostream os(&streambuf);
+    os.exceptions(std::ios_base::failbit | std::ios_base::badbit);
+    EXPECT_THROW(TextStreamWriter::create(os, Charset::UTF_16_BE_BOM), std::ios::failure);
+}
+
+TEST(Writer_BOM, utf32le_failure)
+{
+    std::string buffer = "    ";
+    ThrowingStreambuf streambuf(buffer, 0);
+    std::ostream os(&streambuf);
+    os.exceptions(std::ios_base::failbit | std::ios_base::badbit);
+    EXPECT_THROW(TextStreamWriter::create(os, Charset::UTF_32_LE_BOM), std::ios::failure);
+}
+
+TEST(Writer_BOM, utf32be_failure)
+{
+    std::string buffer = "    ";
+    ThrowingStreambuf streambuf(buffer, 0);
+    std::ostream os(&streambuf);
+    os.exceptions(std::ios_base::failbit | std::ios_base::badbit);
+    EXPECT_THROW(TextStreamWriter::create(os, Charset::UTF_32_BE_BOM), std::ios::failure);
+}
+
+
+
+//TODO für alle writer: BOM darf nicht nochmal auftauchen. unit test dafür schreiben.

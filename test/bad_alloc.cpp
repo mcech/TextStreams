@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "text_stream_reader.h"
+#include "text_stream_writer.h"
 #include <sstream>
 #include <string>
 #include <cstdlib>
@@ -174,5 +175,117 @@ TEST(Reader_bad_alloc, readline_bad_alloc)
     std::unique_ptr<TextStreamReader> reader = TextStreamReader::create(iss, Charset::CP_850);
     throw_bad_alloc = true;
     EXPECT_THROW(reader->read_line(), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, cp437)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::CP_437), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, cp850)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::CP_850), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, cp1252)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::CP_1252), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, iso8859_15)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::ISO_8859_15), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, utf8)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::UTF_8), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, utf16le)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::UTF_16_LE), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, utf16be)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::UTF_16_BE), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, utf32le)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::UTF_32_LE), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, utf32be)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::UTF_32_BE), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, utf8bom)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::UTF_8_BOM), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, utf16lebom)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::UTF_16_LE_BOM), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, utf16bebom)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::UTF_16_BE_BOM), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, utf32lebom)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::UTF_32_LE_BOM), std::bad_alloc);
+    throw_bad_alloc = false;
+}
+
+TEST(Writer_bad_alloc, utf32bebom)
+{
+    std::ostringstream oss;
+    throw_bad_alloc = true;
+    EXPECT_THROW(TextStreamWriter::create(oss, Charset::UTF_32_BE_BOM), std::bad_alloc);
     throw_bad_alloc = false;
 }

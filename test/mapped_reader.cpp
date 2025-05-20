@@ -42,15 +42,15 @@ TEST(MappedReader, iso8859_15)
 
 TEST(MappedReader, invalid_codepoints)
 {
-    std::ostringstream oss;
+    std::ostringstream err;
     std::streambuf* cerr_buf = std::cerr.rdbuf();
-    std::cerr.rdbuf(oss.rdbuf());
+    std::cerr.rdbuf(err.rdbuf());
 
     std::istringstream iss("\x12\x90");
     std::unique_ptr<TextStreamReader> reader = TextStreamReader::create(iss, Charset::ISO_8859_15);
     std::u32string output = reader->read_line();
     EXPECT_EQ(output, U"\xFFFD\xFFFD");
-    EXPECT_TRUE(oss.str().starts_with("Warning"));
+    EXPECT_TRUE(err.str().starts_with("Warning"));
 
     std::cerr.rdbuf(cerr_buf);
 }

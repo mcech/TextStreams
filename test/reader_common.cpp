@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
+#include "throwing_streambuf.h"
 #include "text_stream_reader.h"
-#include "throwing_input_stream.h"
 #include <sstream>
 #include <string>
 
